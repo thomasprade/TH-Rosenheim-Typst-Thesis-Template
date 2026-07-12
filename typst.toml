@@ -1,0 +1,10 @@
+[package]
+name = "thro"
+version = "0.1.0"
+entrypoint = "thro.typ"
+authors = ["Thomas Prade"]
+description = "TH Rosenheim thesis template — a Typst port of the KOMA-Script (scrbook) LaTeX thesis template."
+
+[template]
+path = "template"
+entrypoint = "main.typ"
