@@ -4,6 +4,11 @@ A Typst port of the KOMA-Script (`scrbook`) LaTeX thesis template used for
 bachelor's and master's theses at TH Rosenheim. It provides a single bootstrap
 function, `thro`, in the spirit of the `charged-ieee` template.
 
+For the official regulations, deadlines and forms around your thesis, always
+refer to the authoritative page of the Faculty of Computer Science at TH
+Rosenheim:
+[Informationen rund um Ihre Abschlussarbeit](https://www.th-rosenheim.de/die-hochschule/fakultaeten/fakultaet-fuer-informatik/informationen-fuer-studierende/informationen-rund-um-ihre-abschlussarbeit).
+
 ## Features
 
 - Title page with the bundled TH Rosenheim logo (`src/th_logo.png`) shown
@@ -23,15 +28,77 @@ function, `thro`, in the spirit of the `charged-ieee` template.
 - Uses only Typst's bundled fonts (Libertinus Serif / New Computer Modern Math /
   DejaVu Sans Mono) — no font installation required.
 
-## Installation (local package)
+## Installation
 
-Make the package available under the `@local` namespace. On macOS:
+### 1. Install the Typst compiler
+
+Install the Typst compiler for your platform. See the official download and
+package-manager instructions at
+[typst.app/open-source](https://typst.app/open-source/), for example:
+
+```sh
+# macOS (Homebrew)
+brew install typst
+
+# Linux (winget/cargo/package managers — see the page above)
+# Windows (winget)
+winget install --id Typst.Typst
+```
+
+Verify the installation with `typst --version`.
+
+### 2. Recommended editor setup
+
+For editing Typst with live preview, autocompletion and diagnostics, the
+[**tinymist**](https://marketplace.visualstudio.com/items?itemName=myriad-dreamin.tinymist)
+VS Code extension is recommended. Install it from the Extensions view or run:
+
+```sh
+code --install-extension myriad-dreamin.tinymist
+```
+
+### 3. Make the package available (`@local`)
+
+Expose the template under Typst's `@local` namespace by linking (or copying) this
+repository into your Typst local-packages directory. The target path is
+`<data-dir>/typst/packages/local/thro/0.1.0`, where `<data-dir>` depends on your
+operating system.
+
+#### macOS
 
 ```sh
 DEST="$HOME/Library/Application Support/typst/packages/local/thro/0.1.0"
 mkdir -p "$(dirname "$DEST")"
 ln -s /absolute/path/to/thro "$DEST"     # symlink (recommended while editing)
 # or: cp -R /absolute/path/to/thro "$DEST"
+```
+
+#### Ubuntu / Linux
+
+```sh
+DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/local/thro/0.1.0"
+mkdir -p "$(dirname "$DEST")"
+ln -s /absolute/path/to/thro "$DEST"     # symlink (recommended while editing)
+# or: cp -R /absolute/path/to/thro "$DEST"
+```
+
+#### Windows
+
+Using PowerShell (run as Administrator or with Developer Mode enabled for
+symlinks):
+
+```powershell
+$Dest = "$env:APPDATA\typst\packages\local\thro\0.1.0"
+New-Item -ItemType Directory -Force -Path (Split-Path $Dest) | Out-Null
+New-Item -ItemType SymbolicLink -Path $Dest -Target "C:\absolute\path\to\thro"
+# or copy instead: Copy-Item -Recurse "C:\absolute\path\to\thro" $Dest
+```
+
+Or, using the classic Command Prompt (`cmd.exe`) with `mklink`:
+
+```bat
+mkdir "%APPDATA%\typst\packages\local\thro"
+mklink /D "%APPDATA%\typst\packages\local\thro\0.1.0" "C:\absolute\path\to\thro"
 ```
 
 Then scaffold a new thesis from the bundled example:
@@ -41,6 +108,23 @@ typst init @local/thro my-thesis
 cd my-thesis
 typst compile main.typ
 ```
+
+### Alternative: import directly by path (no symlink)
+
+If you prefer not to register the package, you can **use the library** by
+importing its entry point directly via an absolute or relative path to this
+repository, replacing the `@local/thro:0.1.0` import in your document:
+
+```typ
+#import "/absolute/path/to/thro/thro.typ": thro
+// or relative to your document:
+#import "../thro/thro.typ": thro
+```
+
+Note that this direct-import approach only covers **using** the template in an
+existing document. Scaffolding a new project with `typst init @local/thro` still
+requires the `@local` symlink from step 3, which therefore remains the
+recommended setup.
 
 ## Usage
 
@@ -124,3 +208,35 @@ the official generative-AI-usage declaration as an appendix chapter:
   `#figure(kind: raw, caption: [...])[ ```lang … ``` ]`.
 - For a sans-serif title page like the LaTeX original, install a sans font and
   pass e.g. `sans-font: "Helvetica Neue"`.
+
+## Licensing
+
+This project is a Typst port of the LaTeX _Dokumentvorlage Abschlussarbeit_
+provided by TH Rosenheim (Technische Hochschule Rosenheim). **The maintainer of
+this repository is not the original author of the template.** All rights to the
+original template and its contents remain with the university.
+
+- The original LaTeX template was created by **Prof. Dr. Jochen Schmidt**.
+- All copyright in the template design, wording (declaration of originality,
+  generative-AI-usage declaration, …) and the TH Rosenheim logo belongs to
+  **TH Rosenheim** and its respective authors.
+- This repository only provides a Typst adaptation to make the template usable
+  with the Typst typesetting system; it does not claim any ownership over the
+  underlying template.
+
+If you have questions about the licensing or permitted use of the template
+itself, please refer to the official material and contact details on the
+[TH Rosenheim website](https://www.th-rosenheim.de/die-hochschule/fakultaeten/fakultaet-fuer-informatik/informationen-fuer-studierende/informationen-rund-um-ihre-abschlussarbeit).
+
+## Contributing
+
+Contributions to the Typst port are welcome:
+
+- The repository is **public** and may be freely **cloned**.
+- **Anyone can open issues** to report bugs or suggest improvements.
+- **Anyone can fork** the repository and submit **pull requests** with fixes or
+  enhancements.
+
+For questions that concern the underlying template itself (rather than this
+Typst port), or for further contact information, please consult the
+[TH Rosenheim website](https://www.th-rosenheim.de/die-hochschule/fakultaeten/fakultaet-fuer-informatik/informationen-fuer-studierende/informationen-rund-um-ihre-abschlussarbeit).
