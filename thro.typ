@@ -7,6 +7,7 @@
 
 #import "src/i18n.typ": labels, format-date
 #import "src/declaration.typ": default-declaration, template-credit
+#import "src/ai-declaration.typ": ai-declaration
 
 #let thro(
   // --- Core metadata -------------------------------------------------------
@@ -15,6 +16,7 @@
   abstract: none,
   index-terms: (),
   bibliography: none,
+  appendix: none,
 
   // --- Title page ----------------------------------------------------------
   // Additional logos shown alongside the always-present TH Rosenheim logo.
@@ -39,6 +41,7 @@
   font: "Libertinus Serif",
   sans-font: "Libertinus Serif",
   mono-font: "DejaVu Sans Mono",
+  math-font: "New Computer Modern Math",
   binding-correction: 0mm,
   list-of-figures: true,
   list-of-tables: true,
@@ -55,6 +58,7 @@
 
   // --------------------------------------------------------------------- text
   set text(font: font, size: font-size, lang: language)
+  show math.equation: set text(font: math-font)
 
   // ------------------------------------------------------------------- layout
   set page(
@@ -88,6 +92,7 @@
     counter(figure.where(kind: image)).update(0)
     counter(figure.where(kind: table)).update(0)
     counter(figure.where(kind: raw)).update(0)
+    counter(math.equation).update(0)
     block(above: 2cm, below: 1cm, {
       set text(size: 22pt, weight: "bold")
       heading-number(it)
@@ -115,6 +120,12 @@
   set figure(numbering: n => {
     let chapters = counter(heading).get()
     if chapters.len() == 0 { numbering("1", n) } else { numbering("1.1", chapters.first(), n) }
+  })
+
+  // Per-chapter equation numbering, e.g. "(2.1)".
+  set math.equation(numbering: n => {
+    let chapters = counter(heading).get()
+    if chapters.len() == 0 { numbering("(1)", n) } else { numbering("(1.1)", chapters.first(), n) }
   })
 
   // Caption: bold (sans) label, small text, space separator ("Abbildung 2.1 …").
@@ -286,6 +297,25 @@
   set page(numbering: "1", header: main-header, footer: main-footer)
 
   body
+
+  // ================================================================== APPENDIX
+  // Lettered numbering (A, B, … / A.1) mirroring the LaTeX \appendix; the
+  // arabic page numbering from the main matter simply continues.
+  if appendix != none {
+    counter(heading).update(0)
+    [
+      #set heading(numbering: "A.1")
+      #set figure(numbering: n => {
+        let chapters = counter(heading).get()
+        if chapters.len() == 0 { numbering("A", n) } else { numbering("A.1", chapters.first(), n) }
+      })
+      #set math.equation(numbering: n => {
+        let chapters = counter(heading).get()
+        if chapters.len() == 0 { numbering("(A)", n) } else { numbering("(A.1)", chapters.first(), n) }
+      })
+      #appendix
+    ]
+  }
 
   // =============================================================== BIBLIOGRAPHY
   if bibliography != none {

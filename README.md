@@ -10,10 +10,14 @@ function, `thro`, in the spirit of the `charged-ieee` template.
   **always**; further logos (e.g. a company logo) can be added alongside it.
 - Declaration of originality (German + English) that **defaults** to the
   original template wording but is fully **overridable**.
+- **Appendix** support (`appendix:`) with automatic letter numbering (`A`, `B`,
+  … and `A.1` for figures/equations), rendered before the bibliography.
+- Built-in **generative-AI-usage declaration** (`ai-declaration`, German and
+  English) reproducing the official template form.
 - **Roman** page numbers for the table of contents, list of figures, list of
   tables and list of listings; **arabic** page numbers from the first chapter.
-- Per-chapter figure/table/listing numbering (e.g. `2.1`) and matching
-  `Abbildungs-`, `Tabellen-` und `Code-Verzeichnis`.
+- Per-chapter figure/table/listing **and equation** numbering (e.g. `2.1`) and
+  matching `Abbildungs-`, `Tabellen-` und `Code-Verzeichnis`.
 - Running chapter headers, IEEE bibliography linked into the table of contents.
 - German by default, English via `language: "en"`.
 - Uses only Typst's bundled fonts (Libertinus Serif / New Computer Modern Math /
@@ -56,10 +60,25 @@ typst compile main.typ
   second-supervisor: [M.Sc. …],
   abstract: include "abstract.typ",
   index-terms: ("Stichwort A", "Stichwort B"),
+  appendix: include "appendix.typ",
   bibliography: bibliography("refs.bib", style: "ieee"),
 )
 
 #include "chapters/1_einleitung.typ"
+```
+
+### Appendix and the AI-usage declaration
+
+Appendix content is passed via `appendix:` and rendered after the chapters with
+letter numbering (`A`, `B`, …). The bundled `ai-declaration` helper reproduces
+the official generative-AI-usage declaration as an appendix chapter:
+
+```typ
+// appendix.typ
+#import "@local/thro:0.1.0": ai-declaration
+
+#ai-declaration(language: "de")   // → appendix A
+#ai-declaration(language: "en")   // → appendix B
 ```
 
 ## Parameters
@@ -71,6 +90,7 @@ typst compile main.typ
 | `abstract` | `none` | Abstract content (e.g. `include "abstract.typ"`). |
 | `index-terms` | `()` | Optional keywords shown below the abstract. |
 | `bibliography` | `none` | Result of `bibliography("refs.bib", style: "ieee")`. |
+| `appendix` | `none` | Appendix content (e.g. `include "appendix.typ"`); chapters lettered `A`, `B`, …. |
 | `logos` | `()` | Extra logos shown next to the always-present TH Rosenheim logo. |
 | `faculty` | `[Fakultät für Informatik]` | Faculty name. |
 | `degree` | `none` | Degree programme, e.g. `[Master of Science Informatik]`. |
@@ -84,6 +104,7 @@ typst compile main.typ
 | `paper-size` | `"a4"` | Page size. |
 | `font-size` | `11pt` | Base font size. |
 | `font` / `sans-font` / `mono-font` | Libertinus Serif / Libertinus Serif / DejaVu Sans Mono | Font faces. |
+| `math-font` | New Computer Modern Math | Font for mathematics (the only bundled math face). |
 | `binding-correction` | `0mm` | Extra inner margin for print binding (BCOR). |
 | `list-of-figures` / `list-of-tables` / `list-of-listings` | `true` / `true` / `false` | Toggle the front-matter lists. |
 | `date` | `datetime.today()` | Date used in the declaration. |
@@ -94,6 +115,11 @@ typst compile main.typ
   change it, or add more via `logos:`. **Logos must be SVG, PNG, JPEG or
   GIF** — Typst cannot embed the original template's `.eps`; convert it first
   (e.g. `rsvg-convert`, `inkscape`, `pdftocairo`).
+- The `ai-declaration(language: "de" | "en")` helper renders the official
+  generative-AI-usage declaration as one lettered appendix chapter; call it in
+  the content passed to `appendix:` (see `template/appendix.typ`).
+- Appendix headings, figures, tables and equations use letter numbering
+  (`A`, `A.1`); page numbering continues from the last chapter.
 - Code listings appear in the list of listings when wrapped as
   `#figure(kind: raw, caption: [...])[ ```lang … ``` ]`.
 - For a sans-serif title page like the LaTeX original, install a sans font and
