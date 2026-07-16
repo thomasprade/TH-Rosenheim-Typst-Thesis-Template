@@ -18,6 +18,23 @@ den Verbrauch senken, ohne den Komfort der Nutzer zu beeinträchtigen.
   caption: [Schematische Übersicht der IoT-Lösung.],
 ) <fig-overview>
 
+Zum Vergleich zeigt @fig-vergleich den Ausgangs- und den optimierten Zustand als
+zwei Teil-Abbildungen nebeneinander.
+
+#figure(
+  grid(
+    columns: (1fr, 1fr),
+    column-gutter: 1.5em,
+    row-gutter: 0.6em,
+    align: center,
+    image("../assets/th_logo.png", width: 90%),
+    image("../assets/th_logo.png", width: 90%),
+    [(a) Ausgangszustand], [(b) Optimierter Zustand],
+  ),
+  caption: [Zwei Betriebszustände nebeneinander, dargestellt als Teil-Abbildungen
+    (a) und (b) über ein Grid-Layout.],
+) <fig-vergleich>
+
 == Zielsetzung
 
 Ziel der Arbeit ist es, verschiedene Steuerungsansätze zu vergleichen und einen

@@ -21,8 +21,10 @@
   // sans-font: "Helvetica Neue",
   // To override the declaration text, uncomment:
   // declaration-of-originality: include "declaration.typ",
+  // Appendix content (e.g. the generative-AI-usage declaration). Rendered after
+  // the chapters with lettered numbering (A, B, …):
+  appendix: include "appendix.typ",
   bibliography: bibliography("refs.bib", style: "ieee"),
-  declaration-of-originality: include "declaration.typ"
 )
 
 #include "chapters/1_einleitung.typ"
