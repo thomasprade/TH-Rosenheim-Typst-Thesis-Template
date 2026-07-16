@@ -7,5 +7,7 @@
 
 // The original template ships both a German and an English version. Keep the one
 // matching your thesis language and delete the other (or keep both, as here).
-#ai-declaration(language: "de")
-#ai-declaration(language: "en")
+// The `date` is pinned here only to keep the rendered example deterministic;
+// omit it in a real thesis to default to the current date.
+#ai-declaration(language: "de", date: datetime(year: 2026, month: 8, day: 1))
+#ai-declaration(language: "en", date: datetime(year: 2026, month: 8, day: 1))

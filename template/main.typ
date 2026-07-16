@@ -7,6 +7,9 @@
   degree: [Master of Science Informatik],
   thesis-type: [Masterarbeit],
   hand-in-date: "2026-08-01",
+  // Pinned so the rendered example (and the tracked reference PDF) stays
+  // deterministic; omit this in a real thesis to default to the current date.
+  date: datetime(year: 2026, month: 8, day: 1),
   first-supervisor: [Prof. Dr. A B],
   second-supervisor: [Prof. Dr. C D],
   abstract: include "abstract.typ",

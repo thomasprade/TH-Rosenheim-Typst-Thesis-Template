@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    name: Compile example template
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Typst
+        uses: typst-community/setup-typst@v5
+        with:
+          typst-version: "0.15.0"
+
+      - name: Register thro as a @local package
+        run: |
+          DEST="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/local/thro/0.1.0"
+          mkdir -p "$(dirname "$DEST")"
+          ln -s "$GITHUB_WORKSPACE" "$DEST"
+
+      - name: Compile bundled example
+        working-directory: template
+        run: typst compile main.typ main.pdf
+
+      - name: Upload compiled PDF
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: example-pdf
+          path: template/main.pdf
+          if-no-files-found: warn
