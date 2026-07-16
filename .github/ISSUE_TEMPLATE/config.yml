@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions about the thesis or the official template
+    url: https://www.th-rosenheim.de/die-hochschule/fakultaeten/fakultaet-fuer-informatik/informationen-fuer-studierende/informationen-rund-um-ihre-abschlussarbeit
+    about: >-
+      For questions about your thesis, the regulations, or the underlying
+      TH Rosenheim template itself (rather than this Typst port), please refer
+      to the official Faculty of Computer Science page.
