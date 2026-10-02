@@ -93,11 +93,13 @@
     counter(figure.where(kind: table)).update(0)
     counter(figure.where(kind: raw)).update(0)
     counter(math.equation).update(0)
-    block(above: 2cm, below: 1cm, {
+    // The title is itself the first top float, so floating figures of the
+    // chapter's opening page queue below it instead of above it.
+    place(top, float: true, clearance: 1cm, block({
       set text(size: 22pt, weight: "bold")
       heading-number(it)
       it.body
-    })
+    }))
   }
   show heading.where(level: 2): it => block(above: 1.4em, below: 0.7em, {
     set text(size: 15pt, weight: "bold")
@@ -115,6 +117,10 @@
   show figure.where(kind: table): set figure(supplement: L.table)
   show figure.where(kind: raw): set figure(supplement: L.listing)
   show figure.where(kind: table): set figure.caption(position: top)
+
+  // Float figures to the top of the page, like LaTeX's [t]; a single figure
+  // can opt out with `placement: none`.
+  set figure(placement: top)
 
   // Per-chapter figure numbering, e.g. "2.1".
   set figure(numbering: n => {

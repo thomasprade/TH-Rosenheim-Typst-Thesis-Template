@@ -25,13 +25,15 @@ Ein einzelner Sensorknoten ist in @fig-knoten zu sehen. Bei schmalen Abbildungen
 kann die Beschriftung auch seitlich neben dem Bild stehen.
 
 #[
-  #show figure: it => block(width: 100%, grid(
+  // A custom figure show rule replaces the built-in layout, so the float has
+  // to be re-applied here via `place`.
+  #show figure: it => place(top, float: true, block(width: 100%, grid(
     columns: (auto, 1fr),
     column-gutter: 1em,
     align: (center + horizon, left + horizon),
     it.body,
     it.caption,
-  ))
+  )))
   #figure(
     image("../assets/th_logo.png", width: 3cm),
     caption: [Schematischer Sensorknoten – eine schmale Abbildung mit seitlich
