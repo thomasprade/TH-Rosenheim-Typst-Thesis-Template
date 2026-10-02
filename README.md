@@ -64,6 +64,10 @@ repository into your Typst local-packages directory. The target path is
 `<data-dir>/typst/packages/local/thro/0.1.0`, where `<data-dir>` depends on your
 operating system.
 
+The macOS and Linux snippets are written for **bash** or **zsh** (the macOS
+default). If you use another shell such as **fish**, start a bash first by
+running `bash`, paste the snippet, then leave it again with `exit`.
+
 #### macOS
 
 ```sh
@@ -101,7 +105,9 @@ mkdir "%APPDATA%\typst\packages\local\thro"
 mklink /D "%APPDATA%\typst\packages\local\thro\0.1.0" "C:\absolute\path\to\thro"
 ```
 
-Then scaffold a new thesis from the bundled example:
+### 4. Create a new thesis
+
+Scaffold a new thesis project from the bundled example:
 
 ```sh
 typst init @local/thro my-thesis
@@ -111,20 +117,40 @@ typst compile main.typ
 
 ### Alternative: import directly by path (no symlink)
 
-If you prefer not to register the package, you can **use the library** by
-importing its entry point directly via an absolute or relative path to this
-repository, replacing the `@local/thro:0.1.0` import in your document:
+If you prefer not to register the package, you can copy the example project
+from this repository and point its imports at the cloned repository instead.
+Assuming the repository is cloned to `thro/` and your thesis should live next
+to it in `my-thesis/`:
+
+```sh
+cp -R thro/template my-thesis
+cd my-thesis
+```
+
+In the copied files, replace the `@local/thro:0.1.0` imports with a path to
+`thro.typ`, i.e. in `main.typ`
 
 ```typ
-#import "/absolute/path/to/thro/thro.typ": thro
-// or relative to your document:
 #import "../thro/thro.typ": thro
 ```
 
-Note that this direct-import approach only covers **using** the template in an
-existing document. Scaffolding a new project with `typst init @local/thro` still
-requires the `@local` symlink from step 3, which therefore remains the
-recommended setup.
+and in `appendix.typ`
+
+```typ
+#import "../thro/thro.typ": ai-declaration
+```
+
+Typst only reads files inside the *project root*, which by default is the
+directory of `main.typ`. As `thro.typ` lies outside of `my-thesis/`, the root
+must be set to the common parent directory:
+
+```sh
+typst compile --root .. main.typ
+```
+
+In VS Code with tinymist, set the `tinymist.rootPath` setting to that parent
+directory accordingly. Because of this extra step, the `@local` setup from
+step 3 remains the recommended one.
 
 ## Usage
 
@@ -204,6 +230,14 @@ the official generative-AI-usage declaration as an appendix chapter:
   the content passed to `appendix:` (see `template/appendix.typ`).
 - Appendix headings, figures, tables and equations use letter numbering
   (`A`, `A.1`); page numbering continues from the last chapter.
+- Figures, tables and listings float to the top of the page by default (the
+  equivalent of LaTeX's `[t]`). Pass `placement: none` to a single figure only
+  where it really must stay at its position in the text, or e.g.
+  `placement: bottom` / `auto` for other float positions. On a chapter's first
+  page, floats are placed below the chapter title. A custom `show figure` rule
+  replaces the built-in layout and therefore drops the placement; re-apply it
+  with `place(top, float: true, ...)` inside the rule (see the side-caption
+  figure in `template/chapters/2_grundlagen.typ`).
 - Code listings appear in the list of listings when wrapped as
   `#figure(kind: raw, caption: [...])[ ```lang … ``` ]`.
 - For a sans-serif title page like the LaTeX original, install a sans font and
