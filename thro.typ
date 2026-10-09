@@ -263,44 +263,27 @@
   }
 
   // ================================================================ MAIN MATTER
-  // Running header with the current chapter title + arabic page number; a plain
-  // style (number centered in the footer) is used on chapter-opening pages.
-  let is-chapter-start = () => {
-    let cur = here().page()
-    query(heading.where(level: 1)).map(h => h.location().page()).contains(cur)
-  }
-
+  // Running header with the current chapter title, centered (omitted on
+  // chapter-opening pages); the page number is always centered in the footer
+  // (Typst's default footer for a numbered page).
   let main-header = context {
+    let cur = here().page()
+    let is-chapter-start = query(heading.where(level: 1)).any(h => h.location().page() == cur)
     let before = query(heading.where(level: 1).before(here()))
-    if not is-chapter-start() and before.len() > 0 {
+    if not is-chapter-start and before.len() > 0 {
       let chap = before.last()
       let chap-num = if chap.numbering != none {
         [#numbering(chap.numbering, ..counter(heading).at(chap.location()))#h(0.75em)]
       } else { [] }
       set text(size: 9pt)
-      block(
-        width: 100%,
-        stroke: (bottom: 0.4pt),
-        inset: (bottom: 3pt),
-        grid(
-          columns: (1fr, auto),
-          align(left)[#chap-num#chap.body],
-          align(right)[#counter(page).display()],
-        ),
-      )
-    }
-  }
-
-  let main-footer = context {
-    if is-chapter-start() {
-      align(center)[#counter(page).display()]
+      align(center)[#chap-num#chap.body]
     }
   }
 
   pagebreak(weak: true)
   counter(page).update(1)
   counter(heading).update(0)
-  set page(numbering: "1", header: main-header, footer: main-footer)
+  set page(numbering: "1", header: main-header)
 
   body
 
