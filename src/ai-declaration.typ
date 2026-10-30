@@ -1,9 +1,17 @@
 // Declaration on the use of generative AI systems.
 //
 // A Typst port of the two appendix chapters in the original LaTeX template
-// (append.tex). Call `ai-declaration(language: "de")` and/or
-// `ai-declaration(language: "en")` inside the `appendix` passed to `thro`.
-// Each call produces one appendix chapter (heading + form).
+// (append.tex). Call `ai-declaration(language: "de" | "en", systems: ..., usage: ...)`
+// inside the `appendix` passed to `thro`. Each call produces one appendix
+// chapter (heading + form).
+//
+// - `systems`: array of `(name: ..., url: ...)` dictionaries (`url` optional),
+//   one numbered row each in the first table.
+// - `usage`: dictionary keyed by work step (the keys of `steps` below, identical
+//   in both languages), each value `(systems: ..., description: ...)`. `systems`
+//   is a number referring to a row of the first table, content, a string, or an
+//   array of these (joined with ", "). Steps left out stay blank; unknown keys
+//   and out-of-range numbers are an error.
 
 #import "i18n.typ": labels, format-date
 
@@ -19,6 +27,9 @@
 
 #let ai-declaration(
   language: "de",
+  systems: (),
+  usage: (:),
+  author: none,
   location: [Rosenheim],
   date: datetime.today(),
 ) = {
@@ -40,7 +51,7 @@
       [mir bewusst bin, dass ich als Autor/Autorin dieser Arbeit die
         Verantwortung für die in ihr gemachten Angaben und Aussagen trage.],
     ),
-    usage: [Die oben genannten KI-Systeme habe ich wie im Folgenden dargestellt
+    usage-intro: [Die oben genannten KI-Systeme habe ich wie im Folgenden dargestellt
       eingesetzt.],
     step-head: (
       [Arbeitsschritt],
@@ -48,18 +59,18 @@
       [Beschreibung der Verwendungsweise],
     ),
     steps: (
-      [Generierung von Ideen und Konzeption der Arbeit],
-      [Literatursuche],
-      [Literaturanalyse],
-      [Literaturverwaltung und Zitationsmanagement],
-      [Auswahl von Methoden und Modellen],
-      [Datensammlung und -analyse],
-      [Generierung von Programmcode],
-      [Erstellung von Visualisierungen],
-      [Interpretation und Validierung],
-      [Strukturierung des Texts der Arbeit],
-      [Übersetzung des Texts der Arbeit],
-      [Sonstiges],
+      ideas: [Generierung von Ideen und Konzeption der Arbeit],
+      literature-search: [Literatursuche],
+      literature-analysis: [Literaturanalyse],
+      citation-management: [Literaturverwaltung und Zitationsmanagement],
+      methods: [Auswahl von Methoden und Modellen],
+      data: [Datensammlung und -analyse],
+      code: [Generierung von Programmcode],
+      visualisation: [Erstellung von Visualisierungen],
+      interpretation: [Interpretation und Validierung],
+      structure: [Strukturierung des Texts der Arbeit],
+      translation: [Übersetzung des Texts der Arbeit],
+      other: [Sonstiges],
     ),
     signature: [Unterschrift],
   )
@@ -80,36 +91,55 @@
       [am aware that, as the author of this work, I am responsible for the
         information and statements made therein.],
     ),
-    usage: [I have used the above-mentioned AI systems as described below.],
+    usage-intro: [I have used the above-mentioned AI systems as described below.],
     step-head: (
       [Step],
       [AI system(s) used],
       [Description of how it was used],
     ),
     steps: (
-      [Generation of ideas and conception of the work],
-      [Literature search],
-      [Literature analysis],
-      [Literature and citation management],
-      [Selection of methods and models],
-      [Data collection and analysis],
-      [Generation of program code],
-      [Creation of visualisations],
-      [Interpretation and validation],
-      [Structuring the text of the work],
-      [Translation of text],
-      [Other],
+      ideas: [Generation of ideas and conception of the work],
+      literature-search: [Literature search],
+      literature-analysis: [Literature analysis],
+      citation-management: [Literature and citation management],
+      methods: [Selection of methods and models],
+      data: [Data collection and analysis],
+      code: [Generation of program code],
+      visualisation: [Creation of visualisations],
+      interpretation: [Interpretation and validation],
+      structure: [Structuring the text of the work],
+      translation: [Translation of text],
+      other: [Other],
     ),
     signature: [Signature],
   )
 
   let t = if language == "en" { en } else { de }
 
+  assert(systems.len() > 0, message: "ai-declaration: `systems` must list at least one AI system")
+  for (key, entry) in usage {
+    assert(key in t.steps, message: "ai-declaration: unknown usage step `" + key
+      + "`, expected one of: " + t.steps.keys().join(", "))
+    for field in entry.keys() {
+      assert(field in ("systems", "description"), message: "ai-declaration: unknown field `"
+        + field + "` in usage step `" + key + "`, expected `systems` or `description`")
+    }
+  }
+  let join-systems(key, s) = (if type(s) == array { s } else { (s,) }).map(x => {
+    if type(x) != int { return x }
+    assert(x >= 1 and x <= systems.len(), message: "ai-declaration: usage step `" + key
+      + "` refers to system " + str(x) + ", but only " + str(systems.len()) + " are listed")
+    str(x)
+  }).join(", ")
+
   heading(level: 1, t.heading)
 
   t.intro
 
   v(0.6em)
+
+  // Narrow cells with justified text get huge word gaps.
+  show table: set par(justify: false)
 
   // First form: which AI systems were used.
   table(
@@ -120,9 +150,10 @@
     table.hline(),
     table.header(..t.tool-head.map(strong)),
     table.hline(),
-    [1.], [], [],
-    [2.], [], [],
-    [3.], [], [],
+    ..systems.enumerate().map(((i, s)) => {
+      let url = s.at("url", default: none)
+      ([#(i + 1).], s.name, if url != none { link(url) })
+    }).flatten(),
     table.hline(),
   )
 
@@ -131,7 +162,7 @@
   t.further
   list(marker: checked-box, ..t.checks)
 
-  t.usage
+  t.usage-intro
 
   v(0.6em)
 
@@ -140,22 +171,31 @@
   {
     set text(size: 9pt)
     table(
-      columns: (1.2fr, 1.4fr, 1.4fr),
+      columns: (1.2fr, 1fr, 1.6fr),
       align: left,
       stroke: none,
       inset: (x: 5pt, y: 3.5pt),
       table.hline(),
       table.header(..t.step-head.map(strong)),
       table.hline(),
-      ..t.steps.map(s => (s, [], [], table.hline())).flatten(),
+      ..t.steps.pairs().map(((key, label)) => {
+        let entry = usage.at(key, default: (:))
+        (label, join-systems(key, entry.at("systems", default: [])), entry.at("description", default: []), table.hline())
+      }).flatten(),
     )
   }
 
   v(0.8em)
 
-  [#location, #L.date-connector#format-date(date, language)]
+  // Date and signature move to the next page together, never split.
+  block(breakable: false)[
+    #location, #L.date-connector#format-date(date, language)
 
-  v(1.5cm)
+    #v(1.5cm)
 
-  t.signature
+    #line(length: 6cm, stroke: 0.5pt)
+    #v(-0.4em)
+    #if author != none [#author \ ]
+    #text(size: 0.85em, t.signature)
+  ]
 }
