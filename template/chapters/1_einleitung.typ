@@ -2,7 +2,7 @@
 
 Die Digitalisierung von Gebäuden schreitet stetig voran. Vernetzte Sensoren und
 Aktoren ermöglichen eine bedarfsgerechte Steuerung von Heizung, Lüftung und
-Beleuchtung. Das Internet der Dinge (IoT) bildet dafür die technische
+Beleuchtung. Das @iot bildet dafür die technische
 Grundlage @atzori2010iot.
 
 == Motivation

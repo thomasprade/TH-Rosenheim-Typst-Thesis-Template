@@ -1,4 +1,9 @@
 #import "@local/thro:0.1.0": thro
+// Abbreviations via the glossarium package; entries live in glossary.typ.
+#import "glossary.typ": glossary, make-glossary, register-glossary, print-glossary
+
+#show: make-glossary
+#register-glossary(glossary)
 
 #show: thro.with(
   title: [Konzeption und Umsetzung einer beispielhaften Abschlussarbeit],
@@ -32,3 +37,8 @@
 
 #include "chapters/1_einleitung.typ"
 #include "chapters/2_grundlagen.typ"
+
+// thro has no front-matter slot for a list of abbreviations, so it is placed
+// after the chapters. Only entries referenced in the text are listed.
+#heading(numbering: none)[Abkürzungsverzeichnis]
+#print-glossary(glossary, deduplicate-back-references: true)
