@@ -181,15 +181,46 @@ step 3 remains the recommended one.
 
 Appendix content is passed via `appendix:` and rendered after the chapters with
 letter numbering (`A`, `B`, …). The bundled `ai-declaration` helper reproduces
-the official generative-AI-usage declaration as an appendix chapter:
+the official generative-AI-usage declaration as an appendix chapter, filled in
+with the AI systems you used and what for. It is opt-in: if you did not use any
+AI systems, leave the call out.
 
 ```typ
 // appendix.typ
 #import "@local/thro:0.1.0": ai-declaration
 
-#ai-declaration(language: "de")   // → appendix A
-#ai-declaration(language: "en")   // → appendix B
+#ai-declaration(
+  language: "de",                 // one appendix chapter per call
+  author: [Max Mustermann],
+  systems: (
+    (name: [ChatGPT (GPT-5)], url: "https://chatgpt.com"),
+    (name: [DeepL], url: "https://www.deepl.com"),
+  ),
+  usage: (
+    // `systems` refers to the rows above by number (1 = ChatGPT, 2 = DeepL)
+    literature-search: (systems: 1, description: [Suche nach Einstiegsliteratur.]),
+    translation: (systems: (2, 1), description: [Übersetzung des Abstracts.]),
+  ),
+)
 ```
+
+| Parameter | Default | Description |
+| --- | --- | --- |
+| `language` | `"de"` | `"de"` or `"en"`; selects the form's wording. |
+| `systems` | — | Array of `(name: ..., url: ...)` (`url` optional); one numbered row each. At least one entry is required. |
+| `usage` | `(:)` | Dictionary keyed by work step, each value `(systems: ..., description: ...)`. `systems` is the number of a row in the `systems` table (e.g. `1` or `(1, 3)`), or content/a string; arrays are joined with ", ". Steps you leave out stay blank. Keys: `ideas`, `literature-search`, `literature-analysis`, `citation-management`, `methods`, `data`, `code`, `visualisation`, `interpretation`, `structure`, `translation`, `other`. Unknown keys and numbers without a matching row are an error. |
+| `author` | `none` | Name printed below the signature line. |
+| `location` | `[Rosenheim]` | Place in the date line. |
+| `date` | `datetime.today()` | Date in the date line. |
+
+### Abbreviations (optional)
+
+The scaffold uses the [glossarium](https://typst.app/universe/package/glossarium)
+package for abbreviations. It is not a dependency of `thro` itself; delete
+`glossary.typ` and the glossary lines in `main.typ` if you don't need it.
+Entries live in `glossary.typ`; in the text, `@iot` renders „Internet der Dinge
+(IoT)“ on first use and „IoT“ afterwards. The list of abbreviations is printed
+after the chapters (only referenced entries).
 
 ## Parameters
 
@@ -225,9 +256,9 @@ the official generative-AI-usage declaration as an appendix chapter:
   change it, or add more via `logos:`. **Logos must be SVG, PNG, JPEG or
   GIF** — Typst cannot embed the original template's `.eps`; convert it first
   (e.g. `rsvg-convert`, `inkscape`, `pdftocairo`).
-- The `ai-declaration(language: "de" | "en")` helper renders the official
-  generative-AI-usage declaration as one lettered appendix chapter; call it in
-  the content passed to `appendix:` (see `template/appendix.typ`).
+- The `ai-declaration(...)` helper renders the official generative-AI-usage
+  declaration as one lettered appendix chapter; call it in the content passed
+  to `appendix:` (see `template/appendix.typ` and the parameters above).
 - Appendix headings, figures, tables and equations use letter numbering
   (`A`, `A.1`); page numbering continues from the last chapter.
 - Figures, tables and listings float to the top of the page by default (the
