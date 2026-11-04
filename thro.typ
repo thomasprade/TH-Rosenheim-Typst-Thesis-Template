@@ -5,7 +5,7 @@
 //   #import "@local/thro:0.1.0": thro
 //   #show: thro.with(title: [...], author: (name: "..."), ...)
 
-#import "src/i18n.typ": labels, format-date
+#import "src/i18n.typ": format-date, labels
 #import "src/declaration.typ": default-declaration, template-credit
 #import "src/ai-declaration.typ": ai-declaration
 
@@ -57,7 +57,8 @@
   set document(title: title, author: author-name)
 
   // --------------------------------------------------------------------- text
-  set text(font: font, size: font-size, lang: language)
+  // Doubled hyphenation cost: justified German text otherwise splits words often.
+  set text(font: font, size: font-size, lang: language, costs: (hyphenation: 200%))
   show math.equation: set text(font: math-font)
 
   // ------------------------------------------------------------------- layout
@@ -81,10 +82,17 @@
 
   // ---------------------------------------------------------------- headings
   set heading(numbering: "1.1")
+  // Ragged headings; this also disables their hyphenation (`hyphenate: auto`).
+  show heading: set par(justify: false)
 
-  let heading-number(it) = if it.numbering != none {
-    numbering(it.numbering, ..counter(heading).at(it.location()))
-    h(0.5em)
+  // Number and title in separate columns, so wrapped title lines align with
+  // the first word instead of running back under the number.
+  let heading-title(it) = if it.numbering == none { it.body } else {
+    grid(
+      columns: (auto, 1fr),
+      column-gutter: 0.5em,
+      numbering(it.numbering, ..counter(heading).at(it.location())), it.body,
+    )
   }
 
   show heading.where(level: 1): it => {
@@ -97,19 +105,16 @@
     // chapter's opening page queue below it instead of above it.
     place(top, float: true, clearance: 1cm, block({
       set text(size: 22pt, weight: "bold")
-      heading-number(it)
-      it.body
+      heading-title(it)
     }))
   }
   show heading.where(level: 2): it => block(above: 1.4em, below: 0.7em, {
     set text(size: 15pt, weight: "bold")
-    heading-number(it)
-    it.body
+    heading-title(it)
   })
   show heading.where(level: 3): it => block(above: 1.1em, below: 0.6em, {
     set text(size: 12pt, weight: "bold")
-    heading-number(it)
-    it.body
+    heading-title(it)
   })
 
   // ----------------------------------------------------------------- figures
@@ -194,9 +199,18 @@
     v(1fr)
 
     let info = ()
-    if hand-in-date != none { info.push(L.submission-date + ":"); info.push(hand-in-date) }
-    if first-supervisor != none { info.push(L.first-supervisor + ":"); info.push(first-supervisor) }
-    if second-supervisor != none { info.push(L.second-supervisor + ":"); info.push(second-supervisor) }
+    if hand-in-date != none {
+      info.push(L.submission-date + ":")
+      info.push(hand-in-date)
+    }
+    if first-supervisor != none {
+      info.push(L.first-supervisor + ":")
+      info.push(first-supervisor)
+    }
+    if second-supervisor != none {
+      info.push(L.second-supervisor + ":")
+      info.push(second-supervisor)
+    }
     if info.len() > 0 {
       set text(size: 12pt)
       grid(columns: 2, column-gutter: 1em, row-gutter: 0.6em, ..info)
