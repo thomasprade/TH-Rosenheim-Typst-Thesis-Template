@@ -25,8 +25,10 @@ Rosenheim:
   matching `Abbildungs-`, `Tabellen-` und `Code-Verzeichnis`.
 - Running chapter headers, IEEE bibliography linked into the table of contents.
 - German by default, English via `language: "en"`.
-- Uses only Typst's bundled fonts (Libertinus Serif / New Computer Modern Math /
-  DejaVu Sans Mono) — no font installation required.
+- Layout of the LaTeX original: KOMA `DIV=14` type area, Palatino text,
+  Helvetica headings/captions/title page, Courier code (as shipped with
+  macOS). Without these fonts Typst falls back to its bundled Libertinus Serif /
+  DejaVu Sans Mono (with a warning) — no font installation required.
 
 ## Installation
 
@@ -244,8 +246,8 @@ after the chapters (only referenced entries).
 | `language` | `"de"` | `"de"` or `"en"`. |
 | `paper-size` | `"a4"` | Page size. |
 | `font-size` | `11pt` | Base font size. |
-| `font` / `sans-font` / `mono-font` | Libertinus Serif / Libertinus Serif / DejaVu Sans Mono | Font faces. |
-| `math-font` | New Computer Modern Math | Font for mathematics (the only bundled math face). |
+| `font` / `sans-font` / `mono-font` | Palatino / Helvetica / Courier, each falling back to Libertinus Serif / Libertinus Serif / DejaVu Sans Mono | Font faces. Off macOS e.g. `"TeX Gyre Pagella"` / `"TeX Gyre Heros"` / `"TeX Gyre Cursor"`. |
+| `math-font` | New Computer Modern Math | Font for mathematics (bundled; `"TeX Gyre Pagella Math"` matches Palatino if installed). |
 | `binding-correction` | `0mm` | Extra inner margin for print binding (BCOR). |
 | `list-of-figures` / `list-of-tables` / `list-of-listings` | `true` / `true` / `false` | Toggle the front-matter lists. |
 | `date` | `datetime.today()` | Date used in the declaration. |
@@ -270,9 +272,11 @@ after the chapters (only referenced entries).
   with `place(top, float: true, ...)` inside the rule (see the side-caption
   figure in `template/chapters/2_grundlagen.typ`).
 - Code listings appear in the list of listings when wrapped as
-  `#figure(kind: raw, caption: [...])[ ```lang … ``` ]`.
-- For a sans-serif title page like the LaTeX original, install a sans font and
-  pass e.g. `sans-font: "Helvetica Neue"`.
+  `#figure(kind: raw, caption: [...])[ ```lang … ``` ]`. Like the LaTeX
+  example they get the caption above and rules above and below.
+- Unlike LaTeX, Typst still places top floats on a chapter's opening page
+  (below the title). Move such a figure further down in the source if it
+  should start on the next page.
 
 ## Licensing
 

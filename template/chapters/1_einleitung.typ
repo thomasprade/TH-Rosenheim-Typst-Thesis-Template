@@ -29,7 +29,8 @@ zwei Teil-Abbildungen nebeneinander.
     align: center,
     image("../assets/th_logo.png", width: 90%),
     image("../assets/th_logo.png", width: 90%),
-    [(a) Ausgangszustand], [(b) Optimierter Zustand],
+    // Sub-captions as in LaTeX's subcaption: smaller, with a bold label.
+    text(size: 0.8em)[*(a)* Ausgangszustand], text(size: 0.8em)[*(b)* Optimierter Zustand],
   ),
   caption: [Zwei Betriebszustände nebeneinander, dargestellt als Teil-Abbildungen
     (a) und (b) über ein Grid-Layout.],

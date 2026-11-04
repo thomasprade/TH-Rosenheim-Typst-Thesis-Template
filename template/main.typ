@@ -24,9 +24,8 @@
   // The TH Rosenheim logo is always shown. Add further logos (e.g. a company
   // logo) here — they appear next to it:
   // logos: (image("assets/company-logo.svg", height: 2cm),),
-  // To render the title page / caption labels in a real sans-serif face
-  // (requires the font to be installed), uncomment:
-  // sans-font: "Helvetica Neue",
+  // Fonts default to Palatino / Helvetica / Courier (macOS). Elsewhere, e.g.:
+  // font: "TeX Gyre Pagella", sans-font: "TeX Gyre Heros",
   // To override the declaration text, uncomment:
   // declaration-of-originality: include "declaration.typ",
   // Appendix content (e.g. the generative-AI-usage declaration). Rendered after
