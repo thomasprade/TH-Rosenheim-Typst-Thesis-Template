@@ -32,7 +32,7 @@ about the template itself (rather than this port) should be directed to the
 
 ## Pull request workflow
 
-1. **Fork** the repository and create a topic branch from `main`
+1. **Fork** the repository and create a topic branch from `master`
    (e.g. `fix/title-page-spacing`).
 2. Make your change, keeping it focused and as small as reasonably possible.
 3. **Verify that everything still compiles** before pushing, and regenerate the
@@ -46,7 +46,7 @@ about the template itself (rather than this port) should be directed to the
 
    The CI workflow runs this same check on every pull request; PRs must compile
    cleanly to be mergeable.
-4. Open a pull request against `main` and fill out the PR template.
+4. Open a pull request against `master` and fill out the PR template.
 5. A code owner will review your change. Address review comments and keep the
    branch up to date. At least one approving review from a code owner is
    required before merging.
