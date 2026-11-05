@@ -2,12 +2,21 @@
 // A Typst port of the KOMA-Script (scrbook) LaTeX thesis template.
 //
 // Usage:
-//   #import "@local/thro:0.1.0": thro
+//   #import "@local/thro:0.1.0": thro, flex-caption
 //   #show: thro.with(title: [...], author: (name: "..."), ...)
 
 #import "src/i18n.typ": format-date, labels
 #import "src/declaration.typ": default-declaration, template-credit
 #import "src/ai-declaration.typ": ai-declaration
+
+// Captions and headings are rendered a second time in the front-matter
+// outlines. A citation there would be the first one in the document and shift
+// numeric (IEEE) numbering, so `thro` hides citations in every outline.
+// `flex-caption(long, short)` is the counterpart of LaTeX's
+// `\caption[short]{long}`: the short form appears in the outlines, the long
+// one at the figure.
+#let in-outline = state("thro-in-outline", false)
+#let flex-caption(long, short) = context if in-outline.get() { short } else { long }
 
 #let thro(
   // --- Core metadata -------------------------------------------------------
@@ -314,6 +323,14 @@
 
   // Widely spaced leader dots, as LaTeX's \@dottedtocline.
   set outline.entry(fill: box(width: 1fr, repeat(gap: 0.45em)[.]))
+
+  // Short captions and no citations in outlines (see `flex-caption`).
+  show outline: it => {
+    in-outline.update(true)
+    show cite: none
+    it
+    in-outline.update(false)
+  }
 
   front-title(L.contents)
   {

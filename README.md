@@ -274,6 +274,24 @@ after the chapters (only referenced entries).
 - Code listings appear in the list of listings when wrapped as
   `#figure(kind: raw, caption: [...])[ ```lang … ``` ]`. Like the LaTeX
   example they get the caption above and rules above and below.
+- Citations are hidden in the table of contents and the lists of
+  figures/tables/listings, so a source cited in a caption keeps the number of
+  its first citation in the text (numeric styles such as IEEE). For a clean
+  list entry, give such a figure a short caption without the citation, like
+  LaTeX's `\caption[short]{long}`:
+
+  ```typ
+  #import "@local/thro:0.1.0": flex-caption
+
+  #figure(
+    table(...),
+    caption: flex-caption(
+      [Server-Primitiven nach @spec.],  // at the figure
+      [Server-Primitiven.],             // in the list of tables
+    ),
+  )
+  ```
+
 - Unlike LaTeX, Typst still places top floats on a chapter's opening page
   (below the title). Move such a figure further down in the source if it
   should start on the next page.

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`thro` is a Typst package (`typst.toml`, entrypoint `thro.typ`) porting the TH Rosenheim KOMA-Script (`scrbook`) LaTeX thesis template for bachelor/master theses, mainly for the Faculty of Computer Science. It exposes one bootstrap function, `thro`, used as `#show: thro.with(...)`, plus the `ai-declaration` helper. `template/` is the scaffold copied by `typst init @local/thro`.
+`thro` is a Typst package (`typst.toml`, entrypoint `thro.typ`) porting the TH Rosenheim KOMA-Script (`scrbook`) LaTeX thesis template for bachelor/master theses, mainly for the Faculty of Computer Science. It exposes one bootstrap function, `thro`, used as `#show: thro.with(...)`, plus the `ai-declaration` and `flex-caption` helpers. `template/` is the scaffold copied by `typst init @local/thro`.
 
 ## Build / verify
 
@@ -54,6 +54,7 @@ typst compile main.typ "$OUT/p-{0p}.png" --pages 8-10 --ppi 40
   - Appendix resets the heading counter and re-applies those numbering rules with `A.1` patterns inside a scoped content block. Page numbering continues.
   - Bibliography is passed in as content (`bibliography: bibliography(...)`) so the parameter name shadows Typst's built-in inside `thro`; it's rendered last.
   - Code listings only appear in the list of listings when wrapped as `figure(kind: raw, ...)`.
+  - A `show outline` rule (front matter) sets the `in-outline` state and hides `cite` in every outline, so captions with citations don't take the first IEEE number from the lists. The exported `flex-caption(long, short)` reads that state to show a short caption in the lists.
 - `src/i18n.typ` — `labels` dict keyed by language (`de`, `en`) and `format-date`. Every user-visible string in the layout goes through `labels.at(language)`; adding a label means adding it to **both** languages, or lookup fails.
 - `src/declaration.typ` — default declaration of originality (DE+EN text always both shown; `language` only affects the date line) and the optional template-credit note.
 - `src/ai-declaration.typ` — official generative-AI-usage declaration form, one appendix chapter per call.
